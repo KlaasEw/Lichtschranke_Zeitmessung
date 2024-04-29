@@ -39,7 +39,7 @@ bool previous_END_State = HIGH;
 bool Reset_State = HIGH;
 
 // Variable, um den aktuellen Zustand des Testmode Schalters zu speichern
-bool Testmode_State = HIGH;
+int Testmode_State = HIGH;
 int Test_Response = 0;
 
 // Start- und Stop-Zeit
