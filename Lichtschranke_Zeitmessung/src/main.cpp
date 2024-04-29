@@ -1,6 +1,12 @@
 #include <Arduino.h>
 #include <TM1637Display.h>
+#include <Adafruit_NeoPixel.h>
 
+// Pins für Neopixel 7 Segmentanzeige
+#define LED_PIN    8 // Anschlusspin des Neopixel-LED-Streifens
+#define NUM_LEDS   14 // Anzahl der LEDs pro Digit
+#define BRIGHTNESS 255 // Helligkeit (0-255)
+#define NUM_DIGITS   2  // Anzahl der Stellen
 // Pins für die 7-Segment-Anzeige
 #define CLK_PIN 2
 #define DIO_PIN 3
@@ -10,13 +16,15 @@
 //Pin für Piezo
 #define PIEZO_PIN 5
 //Pin für Reset
-#define RESET_PIN 7
+#define RESET_PIN 9
 //Pin für Testmode
 #define Testmode_PIN 12
 #define Testmode_LED 13
 
 // Initialisierung des Display-Objekts
 TM1637Display display(CLK_PIN, DIO_PIN);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
+
 
 // Variable, um den aktuellen Zustand des Timers zu speichern (gestartet oder gestoppt)
 bool timerRunning = false;
@@ -37,6 +45,73 @@ int Test_Response = 0;
 // Start- und Stop-Zeit
 unsigned long startTime = 0;
 unsigned long stopTime = 0;
+
+const uint16_t segments[] = {
+  0b1110111, // 0
+  0b0100100, // 1
+  0b1101011, // 2
+  0b1101101, // 3
+  0b0111100, // 4
+  0b1011101, // 5
+  0b1011111, // 6
+  0b1100100, // 7
+  0b1111111, // 8
+  0b1111101  // 9
+};
+
+void displayDigit(int digit, int digitPosition) {
+  if (digit >= 0 && digit <= 9 && digitPosition >= 0 && digitPosition < NUM_DIGITS) {
+    uint16_t segmentMask = segments[digit];
+    int startIndex = digitPosition * 7; // Berechne den Startindex für die LED des angegebenen Digits
+    
+    for (int i = 0; i < 7; i++) {
+      if (bitRead(segmentMask, i) == 1) {
+        strip.setPixelColor(startIndex + i, 255, 0, 255); // Setze die LED auf Rot (An)
+      } else {
+        strip.setPixelColor(startIndex + i, 0, 0, 0); // Setze die LED auf Schwarz (Aus)
+      }
+    }
+  }
+}
+
+void displayNumber(int number) {
+  if (number >= 0 && number < 100) {
+    int tensDigit = number / 10;
+    int onesDigit = number % 10;
+    
+    displayDigit(tensDigit, 0); // Anzeige der Zehnerstelle
+    displayDigit(onesDigit, 1); // Anzeige der Einerstelle
+    
+    strip.show();
+  }
+}
+
+// Funktion zum Starten des Timers
+void startTimer() {
+  // Timer starten und Startzeit festlegen
+  startTime = millis();
+  timerRunning = true;
+}
+
+// Funktion zum Stoppen des Timers
+void stopTimer() {
+  // Timer stoppen und Stopzeit festlegen
+  stopTime = millis();
+  timerRunning = false;
+}
+
+// Funktion zur Anzeige der Zeit in Millisekunden auf dem Display
+void displayMillis(unsigned long milliseconds) {
+  display.showNumberDecEx(milliseconds/10, 0b01000000, true);
+  displayNumber(milliseconds/1000);
+}
+
+// Funktion zum Zurücksetzen des Timers
+void resetTimer() {
+  stopTimer();
+  display.showNumberDecEx(0, 0b01000000, true);
+  displayNumber(0);
+}
 
 void setup() {
   // Initialisierung des Displays
@@ -61,31 +136,12 @@ void setup() {
 
   //Starten der Seriellen Schnittstelle
   Serial.begin(9600);
-}
 
-// Funktion zum Starten des Timers
-void startTimer() {
-  // Timer starten und Startzeit festlegen
-  startTime = millis();
-  timerRunning = true;
-}
-
-// Funktion zum Stoppen des Timers
-void stopTimer() {
-  // Timer stoppen und Stopzeit festlegen
-  stopTime = millis();
-  timerRunning = false;
-}
-
-// Funktion zur Anzeige der Zeit in Millisekunden auf dem Display
-void displayMillis(unsigned long milliseconds) {
-  display.showNumberDecEx(milliseconds/10, 0b01000000, true);
-}
-
-// Funktion zum Zurücksetzen des Timers
-void resetTimer() {
-  stopTimer();
-  display.showNumberDecEx(0, 0b01000000, true);
+  // Konfiguration für Neopixel 7 Segmentanzeige
+  strip.begin();
+  strip.setBrightness(BRIGHTNESS);
+  strip.show(); //
+  displayNumber(0);
 }
 
 void loop() {
