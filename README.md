@@ -1,8 +1,12 @@
 # Lichtschranke Zeitmessung
 Arduino Projekt zur Zeitmessung in der Leistungsdiagnoatik für Sportvereine.
 
-## Beschreibung
+## Kurzbeschreibung
 Das Ardunio Projekt soll in der Leistungsdiagnostik in Sportvereinen einsetzbar sein. Dazu kann die Zeit die zwischem dem Durchqueren der ersten und dem Durchquerden der zweiten Lichtschranke liegt gemessen werden. Die Zweit wird auf einer großen 7-Segemtanzeige dargestellt.
+
+## Entwicklungsstand
+Diese Projket befindet sich gerde in der Entwicklung. Eine finale Umsetzung des Aufbaus hat noch nicht stattgefunden, ist aber für die nächsten Wochen geplant.
+
 
 ## Bedienungsanleitung
 
