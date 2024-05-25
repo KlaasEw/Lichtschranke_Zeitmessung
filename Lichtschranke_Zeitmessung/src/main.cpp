@@ -4,9 +4,9 @@
 
 // Pins für Neopixel 7 Segmentanzeige
 #define LED_PIN    8 // Anschlusspin des Neopixel-LED-Streifens
-#define NUM_LEDS   14 // Anzahl der LEDs pro Digit
+#define NUM_LEDS   28 // Anzahl der LEDs pro Digit
 #define BRIGHTNESS 255 // Helligkeit (0-255)
-#define NUM_DIGITS   2  // Anzahl der Stellen
+#define NUM_DIGITS   4  // Anzahl der Stellen
 // Pins für die 7-Segment-Anzeige
 #define CLK_PIN 2
 #define DIO_PIN 3
@@ -75,12 +75,17 @@ void displayDigit(int digit, int digitPosition) {
 }
 
 void displayNumber(int number) {
-  if (number >= 0 && number < 100) {
-    int tensDigit = number / 10;
-    int onesDigit = number % 10;
-    
-    displayDigit(tensDigit, 0); // Anzeige der Zehnerstelle
-    displayDigit(onesDigit, 1); // Anzeige der Einerstelle
+  if (number >= 0 && number < 10000) {
+    int hundredsDigit = (number / 1000) % 10;
+    int tenthsDigit = (number / 100) % 10;
+    int onesDigit = (number / 10) % 10;
+    int tensDigit = number % 10;
+
+
+    displayDigit(hundredsDigit, 0); // Anzeige der Hundertstelstelle
+    displayDigit(tenthsDigit, 1); // Anzeige der Zehntelstelle
+    displayDigit(onesDigit, 2); // Anzeige der Einerstelle
+    displayDigit(tensDigit, 3); // Anzeige der Zehnerstelle
     
     strip.show();
   }
@@ -103,7 +108,7 @@ void stopTimer() {
 // Funktion zur Anzeige der Zeit in Millisekunden auf dem Display
 void displayMillis(unsigned long milliseconds) {
   display.showNumberDecEx(milliseconds/10, 0b01000000, true);
-  displayNumber(milliseconds/1000);
+  displayNumber(milliseconds/10);
 }
 
 // Funktion zum Zurücksetzen des Timers
