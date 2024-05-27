@@ -3,7 +3,7 @@
 
 // Pins für Neopixel 7 Segmentanzeige
 #define LED_PIN    8 // Anschlusspin des Neopixel-LED-Streifens
-#define NUM_LEDS   29 // Anzahl der LEDs pro Digit
+#define NUM_LEDS   29 // Anzahl der LEDs
 #define BRIGHTNESS 255 // Helligkeit (0-255)
 #define NUM_DIGITS   4  // Anzahl der Stellen
 // Pins für die 7-Segment-Anzeige
@@ -63,7 +63,7 @@ void displayDigit(int digit, int digitPosition) {
     
     for (int i = 0; i < 7; i++) {
       if (bitRead(segmentMask, i) == 1) {
-        strip.setPixelColor(startIndex + i, 255, 255, 255); // Setze die LED auf Rot (An)
+        strip.setPixelColor(startIndex + i, BRIGHTNESS, BRIGHTNESS, BRIGHTNESS); // Setze die LED auf Rot (An)
       } else {
         strip.setPixelColor(startIndex + i, 0, 0, 0); // Setze die LED auf Schwarz (Aus)
       }
@@ -136,7 +136,7 @@ void setup() {
   // Konfiguration für Neopixel 7 Segmentanzeige
   strip.begin();
   strip.setBrightness(BRIGHTNESS);
-  strip.setPixelColor(28, 255, 255, 255);
+  strip.setPixelColor(28, BRIGHTNESS, BRIGHTNESS, BRIGHTNESS);
   strip.show(); //
   displayNumber(0);
 }
