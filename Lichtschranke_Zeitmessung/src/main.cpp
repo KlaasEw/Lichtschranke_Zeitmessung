@@ -6,18 +6,21 @@
 #define NUM_LEDS   29 // Anzahl der LEDs
 #define BRIGHTNESS 255 // Helligkeit (0-255)
 #define NUM_DIGITS   4  // Anzahl der Stellen
-// Pins für die 7-Segment-Anzeige
-#define CLK_PIN 2
-#define DIO_PIN 3
+
 // Pin für die Lichtschranken
 #define START_GATE_PIN 4
 #define END_GATE_PIN 6
+
 //Pin für Piezo
 #define PIEZO_PIN 5
+
 //Pin für Reset
 #define RESET_PIN 9
+
 //Pin für Testmode
-#define Testmode_PIN 12
+//#define Operating_Mode_PIN_1 12
+#define Operating_Mode_PIN_1 2
+#define Operating_Mode_PIN_2 3
 #define Testmode_LED 13
 
 // Initialisierung des Neopixel-LED-Streifens
@@ -35,9 +38,11 @@ bool previous_END_State = HIGH;
 // Variable, um den aktuellen Zustand des Resettasters zu speichern
 bool Reset_State = HIGH;
 
-// Variable, um den aktuellen Zustand des Testmode Schalters zu speichern
+// Variable, um den aktuellen Zustand des Operating_Mode Schalters zu speichern
 int Operating_Mode = HIGH;
 int Operating_Response = 0;
+int Operating_Mode_PIN_1_Status = 0;
+int Operating_Mode_PIN_2_Status = 0;
 
 // Start- und Stop-Zeit
 unsigned long startTime = 0;
@@ -113,6 +118,79 @@ void resetTimer() {
   displayNumber(0);
 }
 
+void Ein_Lichtschranken_Mode(){
+
+}
+
+void Zwei_Lichtschranken_Mode(){
+  //Lichtschranke Start
+  if (Start_State == LOW && previous_Start_State == HIGH && timerRunning == LOW) {
+    startTimer();
+    previous_Start_State = LOW;
+    Serial.println("Start");
+    digitalWrite(PIEZO_PIN, HIGH);
+    delay(50);
+  }
+
+  //Lichtschranke Start zurücksetzen
+  if (Start_State == HIGH && previous_Start_State == LOW) {
+    Serial.println("Start/Stop");
+    previous_Start_State = HIGH;
+    digitalWrite(PIEZO_PIN, LOW);
+    delay(50);
+  }
+
+  //Lichtschranke Stop
+  if (END_State == LOW && previous_END_State == HIGH && timerRunning == HIGH) {
+    stopTimer();
+    previous_END_State = LOW;
+    Serial.println("Stop");
+    digitalWrite(PIEZO_PIN, HIGH);
+    delay(50);
+  }
+
+  //Lichtschranke Start zurücksetzen
+  if (END_State == HIGH && previous_END_State == LOW) {
+    Serial.println("Start/Stop");
+    previous_END_State = HIGH;
+    digitalWrite(PIEZO_PIN, LOW);
+    delay(50);
+  }
+  //Timer auf 0 zurücksetzen
+  if(Reset_State == LOW) {
+    resetTimer();
+  }
+
+ // Überprüfen, ob der Timer läuft
+ if (timerRunning) {
+   // Aktuelle Zeit abrufen
+   unsigned long currentTime = millis();
+
+   // Anzeige der vergangenen Zeit
+   displayMillis(currentTime - startTime);
+  }
+}
+
+void Test_Mode(){
+  timerRunning = false;
+
+  Serial.print("TestMode: ");
+  digitalWrite(Testmode_LED, HIGH);
+
+  if (Start_State == HIGH) {
+    Operating_Response = 1000;
+  } else {
+    Operating_Response = 0;
+  }
+
+  if (END_State == HIGH) {
+    Operating_Response = Operating_Response + 1;
+  }
+
+  //display.showNumberDecEx(Operating_Response, 0b01000000, true);
+  Serial.println(Operating_Response);
+}
+
 void setup() {
   // Konfiguration der Lichtschranken-Pins
   pinMode(START_GATE_PIN, INPUT_PULLUP);
@@ -126,7 +204,8 @@ void setup() {
   pinMode(RESET_PIN, INPUT_PULLUP);
 
   // Konfiguration des Testmode-Pins und der Testmode LED
-  pinMode(Testmode_PIN, INPUT_PULLUP);
+  pinMode(Operating_Mode_PIN_1, INPUT_PULLUP);
+  pinMode(Operating_Mode_PIN_2, INPUT_PULLUP);
   pinMode(Testmode_LED, OUTPUT);
   digitalWrite(Testmode_LED, LOW);
 
@@ -146,7 +225,18 @@ void loop() {
   Start_State = digitalRead(START_GATE_PIN);
   END_State = digitalRead(END_GATE_PIN);
   Reset_State = digitalRead(RESET_PIN);
-  Operating_Mode = !digitalRead(Testmode_PIN);
+  //Operating_Mode = !digitalRead(Operating_Mode_PIN_1);
+
+  Operating_Mode_PIN_1_Status = !digitalRead(Operating_Mode_PIN_1);
+  Operating_Mode_PIN_2_Status= !digitalRead(Operating_Mode_PIN_2);
+
+  if (Operating_Mode_PIN_1_Status == 0 && Operating_Mode_PIN_2_Status == 1){ //Ein_Lichtschranken_Mode
+    Operating_Mode = 0;
+  }else if (Operating_Mode_PIN_1_Status == 1 && Operating_Mode_PIN_2_Status == 0){ //Zwei_Lichtschranken_Mode
+    Operating_Mode = 1;
+  }else { //Testmode
+    Operating_Mode = 2;
+  }
 
   if (Operating_Mode == 0 && Operating_Response != 0) {
     Operating_Response = 0;
@@ -155,73 +245,18 @@ void loop() {
   }
 
   switch (Operating_Mode){
-    case 0: // Normalmodus
-      //Lichtschranke Start
-      if (Start_State == LOW && previous_Start_State == HIGH && timerRunning == LOW) {
-        startTimer();
-        previous_Start_State = LOW;
-        Serial.println("Start");
-        digitalWrite(PIEZO_PIN, HIGH);
-        delay(50);
-      }
-
-    //Lichtschranke Start zurücksetzen
-      if (Start_State == HIGH && previous_Start_State == LOW) {
-        Serial.println("Start/Stop");
-        previous_Start_State = HIGH;
-        digitalWrite(PIEZO_PIN, LOW);
-        delay(50);
-      }
-
-    //Lichtschranke Stop
-      if (END_State == LOW && previous_END_State == HIGH && timerRunning == HIGH) {
-        stopTimer();
-        previous_END_State = LOW;
-        Serial.println("Stop");
-        digitalWrite(PIEZO_PIN, HIGH);
-        delay(50);
-      }
-
-    //Lichtschranke Start zurücksetzen
-      if (END_State == HIGH && previous_END_State == LOW) {
-        Serial.println("Start/Stop");
-        previous_END_State = HIGH;
-        digitalWrite(PIEZO_PIN, LOW);
-        delay(50);
-      }
-
-    //Timer auf 0 zurücksetzen
-      if(Reset_State == LOW) {
-        resetTimer();
-      }
-
-      // Überprüfen, ob der Timer läuft
-      if (timerRunning) {
-        // Aktuelle Zeit abrufen
-        unsigned long currentTime = millis();
-
-        // Anzeige der vergangenen Zeit
-        displayMillis(currentTime - startTime);
-      }
+    case 0:
+      Ein_Lichtschranken_Mode();
+      Serial.println("EIN");
     break;
 
     case 1:
-      Serial.print("TestMode: ");
-      timerRunning = false;
-      digitalWrite(Testmode_LED, HIGH);
-      if (Start_State == HIGH) {
-        Operating_Response = 1000;
-      } else {
-        Operating_Response = 0;
-      }
+      Zwei_Lichtschranken_Mode();
+      Serial.println("Zwei");
+    break;
 
-      if (END_State == HIGH) {
-        Operating_Response = Operating_Response + 1;
-      }
-
-      //display.showNumberDecEx(Operating_Response, 0b01000000, true);
-      Serial.println(Operating_Response);
-
+    case 2:
+      Test_Mode();
     break;
 
     default:
