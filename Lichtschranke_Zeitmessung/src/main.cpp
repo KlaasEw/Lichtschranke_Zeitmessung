@@ -40,6 +40,7 @@ bool Reset_State = HIGH;
 
 // Variable, um den aktuellen Zustand des Operating_Mode Schalters zu speichern
 int Operating_Mode = HIGH;
+int Operating_Mode_Alt = HIGH;
 int Operating_Response = 0;
 int Operating_Mode_PIN_1_Status = 0;
 int Operating_Mode_PIN_2_Status = 0;
@@ -187,7 +188,7 @@ void Test_Mode(){
     Operating_Response = Operating_Response + 1;
   }
 
-  //display.showNumberDecEx(Operating_Response, 0b01000000, true);
+  displayNumber(Operating_Response);
   Serial.println(Operating_Response);
 }
 
@@ -236,6 +237,11 @@ void loop() {
     Operating_Mode = 1;
   }else { //Testmode
     Operating_Mode = 2;
+  }
+
+  if (Operating_Mode != Operating_Mode_Alt){
+    Operating_Mode_Alt = Operating_Mode;
+    displayNumber(0);
   }
 
   if (Operating_Mode == 0 && Operating_Response != 0) {
