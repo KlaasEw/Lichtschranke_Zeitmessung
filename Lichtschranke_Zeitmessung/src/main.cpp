@@ -120,7 +120,54 @@ void resetTimer() {
 }
 
 void Ein_Lichtschranken_Mode(){
+  //Lichtschranke Start
+  if ( ((Start_State == LOW && previous_Start_State == HIGH) || (END_State == LOW && previous_END_State == HIGH )) && timerRunning == LOW) {
+    startTimer();
+    previous_Start_State = LOW;
+    previous_END_State = LOW;
+    Serial.println("Start");
+    digitalWrite(PIEZO_PIN, HIGH);
+    delay(80);
+  }
 
+  //Lichtschranke Start zurücksetzen
+  if (Start_State == HIGH && previous_Start_State == LOW) {
+    Serial.println("Start/Stop");
+    previous_Start_State = HIGH;
+    digitalWrite(PIEZO_PIN, LOW);
+    delay(200);
+  }
+
+  //Lichtschranke Stop
+  if (((Start_State == LOW && previous_Start_State == HIGH) || (END_State == LOW && previous_END_State == HIGH )) && timerRunning == HIGH) {
+    stopTimer();
+    previous_END_State = LOW;
+    previous_Start_State = LOW;
+    Serial.println("Stop");
+    digitalWrite(PIEZO_PIN, HIGH);
+    delay(50);
+  }
+
+  //Lichtschranke Start zurücksetzen
+  if (END_State == HIGH && previous_END_State == LOW) {
+    Serial.println("Start/Stop");
+    previous_END_State = HIGH;
+    digitalWrite(PIEZO_PIN, LOW);
+    delay(50);
+  }
+  // Reset Taster gedrückt ==> Timer auf 0 zurücksetzen
+  if(Reset_State == LOW) {
+    resetTimer();
+  }
+
+ // Anzeigen der aktuellen Zeit auf dem Display
+ if (timerRunning) {
+   // Aktuelle Zeit abrufen
+   unsigned long currentTime = millis();
+
+   // Anzeige der vergangenen Zeit
+   displayMillis(currentTime - startTime);
+  }
 }
 
 void Zwei_Lichtschranken_Mode(){
@@ -157,12 +204,13 @@ void Zwei_Lichtschranken_Mode(){
     digitalWrite(PIEZO_PIN, LOW);
     delay(50);
   }
-  //Timer auf 0 zurücksetzen
+  
+  // Reset Taster gedrückt ==> Timer auf 0 zurücksetzen
   if(Reset_State == LOW) {
     resetTimer();
   }
 
- // Überprüfen, ob der Timer läuft
+ // Anzeigen der aktuellen Zeit auf dem Display
  if (timerRunning) {
    // Aktuelle Zeit abrufen
    unsigned long currentTime = millis();
@@ -242,6 +290,7 @@ void loop() {
   if (Operating_Mode != Operating_Mode_Alt){
     Operating_Mode_Alt = Operating_Mode;
     displayNumber(0);
+    digitalWrite(PIEZO_PIN, LOW);
   }
 
   if (Operating_Mode == 0 && Operating_Response != 0) {
