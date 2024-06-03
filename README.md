@@ -20,18 +20,8 @@ Dieses Projekt kann in verschiedenen Anwendungen eingesetzt werden, darunter:
 Diese Projket befindet sich gerde in der Entwicklung. Eine finale Umsetzung des Aufbaus hat noch nicht stattgefunden, ist aber für die nächsten Wochen geplant.
 
 ## Dokumentation
-Eine vollständige Dokumentation findet sich im Wiki dieses Projektes unter:
+Die Dokumentation diese Projektes findet sich im [Wiki](https://github.com/KlaasEw/Lichtschranke_Zeitmessung/wiki) diese Repositories. Die Dokumentation beinhaltet eine Liste alle benötigen Bauteile, eine Bau, sowie eine Montageanleitung.
 
-
-### Bedienungsanleitung
-Eine Bedinungsanleitung findet sich im Wiki unter:
-
-### Bauteilliste
-Eine Liste alle benötigten Bauteile findet sich im Wiki unter:
-https://github.com/KlaasEw/Lichtschranke_Zeitmessung/wiki/Bauteilliste
-
-### Montageanleitung
-Eine Montageanleitung findet sich im Wiki unter:
 
 ## Credit
 
