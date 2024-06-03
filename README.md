@@ -25,7 +25,11 @@ Die Dokumentation diese Projektes findet sich im [Wiki](https://github.com/Klaas
 
 ## Credit
 
-Vielen Dank an shiura, für das bereitstellen der STL-Files zum Erstellen des Displays. Weitere Informationen finden sich auf Thingivers (https://www.thingiverse.com/thing:5170654). Die Modelle wurden von mir noch leicht editiert und um Befestigungslöcher ergänzt.
+#### 3D-Modell Display
+Vielen Dank an shiura, für das bereitstellen der STL-Files zum Erstellen des Displays. Weitere Informationen finden sich auf [Thingivers](https://www.thingiverse.com/thing:5170654). Die Modelle wurden von mir noch leicht editiert und um Befestigungslöcher ergänzt.
+
+#### Adafruit NeoPixel
+Vielen Dank an Adafruit für das Bereitstellen den NeoPixel Bibliothek.
 
 ## Lizens
-Das Projekt wurde unter der CC BY-NC-SA 4.0 DEED Lizens veröffentlicht (https://creativecommons.org/licenses/by-nc-sa/4.0/).
+Das Projekt wurde unter der [CC BY-NC-SA 4.0 DEED Lizens](https://creativecommons.org/licenses/by-nc-sa/4.0/) veröffentlicht.
