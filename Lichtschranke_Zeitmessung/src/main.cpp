@@ -12,7 +12,7 @@
 #define END_GATE_PIN 6
 
 //Pin für Piezo
-#define PIEZO_PIN 5
+#define PIEZO_PIN 7
 
 //Pin für Reset
 #define RESET_PIN 9
@@ -127,7 +127,7 @@ void Ein_Lichtschranken_Mode(){
     previous_END_State = LOW;
     Serial.println("Start");
     digitalWrite(PIEZO_PIN, HIGH);
-    delay(80);
+    delay(100);
   }
 
   //Lichtschranke Start zurücksetzen
