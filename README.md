@@ -2,8 +2,9 @@
 
 Dieses Projekt implementiert eine Arduino-Anwendung zur Auswertung von zwei Lichtschranken. Das Ardunio Projekt soll in der Leistungsdiagnostik in Sportvereinen einsetzbar sein. Die Anwendung startet einen Timer, wenn die erste Lichtschranke unterbrochen wird, und stoppt den Timer, wenn die zweite Lichtschranke durchkreuzt wird. Das Ergebnis wird auf einer großen 7 Segmentanzeige dargestellt. Zusätzlich gibt es einen Testmodus, der es ermöglicht, den Status beider Lichtschranken kontinuierlich im seriellen Monitor anzuzeigen.
 
-![Foto der Schaltung, die in einem Koffer verbaut wurde.](/Assets/DSC02366.jpg)
-![Foto der Schaltung im geöffneten Koffer](/Assets/DSC02359.jpg)
+|Fertiger Aufbau|Schaltung im Inneren|
+|---|---|
+|![Foto der Schaltung, die in einem Koffer verbaut wurde.](/Assets/DSC02366.jpg)|![Foto der Schaltung im geöffneten Koffer](/Assets/DSC02359.jpg)|
 
 ## Funktionen
 
