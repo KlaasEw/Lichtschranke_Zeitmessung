@@ -3,7 +3,7 @@
 
 // Pins für Neopixel 7 Segmentanzeige
 #define LED_PIN    8 // Anschlusspin des Neopixel-LED-Streifens
-#define NUM_LEDS   29 // Anzahl der LEDs
+#define NUM_LEDS   56 // Anzahl der LEDs
 #define BRIGHTNESS 255 // Helligkeit (0-255)
 #define NUM_DIGITS   4  // Anzahl der Stellen
 
@@ -49,29 +49,32 @@ int Operating_Mode_PIN_2_Status = 0;
 unsigned long startTime = 0;
 unsigned long stopTime = 0;
 
-const uint16_t segments[] = {
-  0b1110111, // 0
-  0b0100100, // 1
-  0b1101011, // 2
-  0b1101101, // 3
-  0b0111100, // 4
-  0b1011101, // 5
-  0b1011111, // 6
-  0b1100100, // 7
-  0b1111111, // 8
-  0b1111101  // 9
+const uint8_t digits[10][7] = {
+  {1, 1, 1, 0, 1, 1, 1}, // 0
+  {1, 0, 0, 0, 1, 0, 0}, // 1
+  {1, 1, 0, 1, 0, 1, 1}, // 2
+  {1, 1, 0, 1, 1, 1, 0}, // 3
+  {1, 0, 1, 1, 1, 0, 0}, // 4
+  {0, 1, 1, 1, 1, 1, 0}, // 5
+  {0, 1, 1, 1, 1, 1, 1}, // 6
+  {1, 1, 0, 0, 1, 0, 0}, // 7
+  {1, 1, 1, 1, 1, 1, 1}, // 8
+  {1, 1, 1, 1, 1, 1, 0}  // 9
 };
 
 void displayDigit(int digit, int digitPosition) {
   if (digit >= 0 && digit <= 9 && digitPosition >= 0 && digitPosition < NUM_DIGITS) {
-    uint16_t segmentMask = segments[digit];
-    int startIndex = digitPosition * 7; // Berechne den Startindex für die LED des angegebenen Digits
+    int startIndex = digitPosition * 14; // Jetzt 14 LEDs pro Digit (7 Segmente * 2 LEDs)
     
     for (int i = 0; i < 7; i++) {
-      if (bitRead(segmentMask, i) == 1) {
-        strip.setPixelColor(startIndex + i, BRIGHTNESS, BRIGHTNESS, BRIGHTNESS); // Setze die LED auf Rot (An)
+      int ledIndex1 = startIndex + (i * 2);
+      int ledIndex2 = ledIndex1 + 1;
+      if (digits[digit][i] == 1) {
+        strip.setPixelColor(ledIndex1, BRIGHTNESS, 0, 0);
+        strip.setPixelColor(ledIndex2, BRIGHTNESS, 0, 0);
       } else {
-        strip.setPixelColor(startIndex + i, 0, 0, 0); // Setze die LED auf Schwarz (Aus)
+        strip.setPixelColor(ledIndex1, 0, 0, 0);
+        strip.setPixelColor(ledIndex2, 0, 0, 0);
       }
     }
   }
@@ -79,16 +82,15 @@ void displayDigit(int digit, int digitPosition) {
 
 void displayNumber(int number) {
   if (number >= 0 && number < 10000) {
-    int hundredsDigit = (number / 1000) % 10;
-    int tenthsDigit = (number / 100) % 10;
-    int onesDigit = (number / 10) % 10;
-    int tensDigit = number % 10;
-
-
-    displayDigit(hundredsDigit, 3); // Anzeige der Hundertstelstelle
-    displayDigit(tenthsDigit, 2); // Anzeige der Zehntelstelle
-    displayDigit(onesDigit, 1); // Anzeige der Einerstelle
-    displayDigit(tensDigit, 0); // Anzeige der Zehnerstelle
+    int thousandsDigit = (number / 1000) % 10;
+    int hundredsDigit = (number / 100) % 10;
+    int tensDigit = (number / 10) % 10;
+    int onesDigit = number % 10;
+    
+    displayDigit(thousandsDigit, 3);
+    displayDigit(hundredsDigit, 2);
+    displayDigit(tensDigit, 1);
+    displayDigit(onesDigit, 0);
     
     strip.show();
   }
